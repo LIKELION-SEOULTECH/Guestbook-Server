@@ -19,7 +19,7 @@ public class PostController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse<PostResponse> createPost(@Valid @RequestBody CreatePostRequest request) {
+    public ApiResponse<PostResponse> createPost(@Valid @RequestBody PostRequest.create request) {
         return ApiResponse.success(postService.createPost(request));
     }
 
@@ -33,7 +33,7 @@ public class PostController {
     @PatchMapping("/{id}")
     public ApiResponse<PostResponse> updatePost(
             @PathVariable Long id,
-            @Valid @RequestBody UpdatePostRequest request) {
+            @Valid @RequestBody PostRequest.update request) {
         return ApiResponse.success(postService.updatePost(id, request));
     }
 
@@ -41,7 +41,7 @@ public class PostController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deletePost(
             @PathVariable Long id,
-            @Valid @RequestBody DeletePostRequest request) {
+            @Valid @RequestBody PostRequest.delete request) {
         postService.deletePost(id, request);
     }
 }

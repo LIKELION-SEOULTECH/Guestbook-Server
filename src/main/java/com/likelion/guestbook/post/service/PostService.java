@@ -26,7 +26,7 @@ public class PostService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public PostResponse createPost(CreatePostRequest request) {
+    public PostResponse createPost(PostRequest.@Valid create request) {
         Emotion emotion = emotionService.getEmotion(request.content());
         Post post = Post.builder()
                 .userName(request.userName())
@@ -60,7 +60,7 @@ public class PostService {
     }
 
     @Transactional
-    public PostResponse updatePost(Long id, @Valid UpdatePostRequest request) {
+    public PostResponse updatePost(Long id, PostRequest.@Valid update request) {
         Post post = postRepository.findById(id)
                 .orElseThrow(BadRequestException::new);
 
@@ -76,7 +76,7 @@ public class PostService {
     }
 
     @Transactional
-    public void deletePost(Long id, DeletePostRequest request) {
+    public void deletePost(Long id, PostRequest.@Valid delete request) {
         Post post = postRepository.findById(id)
                 .orElseThrow(UnauthorizedException::new);
 
