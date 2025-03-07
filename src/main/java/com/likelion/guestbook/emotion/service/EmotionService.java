@@ -1,44 +1,61 @@
 package com.likelion.guestbook.emotion.service;
 
+import com.likelion.guestbook.emotion.dto.EmotionAnalysis;
 import com.likelion.guestbook.exception.custom.EmotionApiErrorException;
 import com.likelion.guestbook.emotion.entity.Emotion;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.ParameterizedTypeReference;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Map;
-import java.util.Objects;
-
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EmotionService {
     private final RestTemplate restTemplate;
-    private static final String EMOTION_API_URL = "http://localhost:5000/analyze";
+
+    @Value("${emotion.analysis.url:http://localhost:5000/analyze}")
+    private String emotionAnalysisUrl;
 
     public Emotion getEmotion(String content) {
 
-        Map<String, String> requestBody = Map.of("content", content);
+        try {
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(requestBody, headers);
+            EmotionAnalysis.request request = new EmotionAnalysis.request(content);
+            HttpEntity<EmotionAnalysis.request> entity = new HttpEntity<>(request, headers);
 
-        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
-                EMOTION_API_URL,
-                HttpMethod.POST,
-                requestEntity,
-                new ParameterizedTypeReference<>() {}
-        );
+            log.info("감정 분석 API 호출: {}", emotionAnalysisUrl);
+            EmotionAnalysis.response response = restTemplate.postForObject(
+                    emotionAnalysisUrl,
+                    entity,
+                    EmotionAnalysis.response.class
+            );
 
-        if (Boolean.TRUE.equals(Objects.requireNonNull(response.getBody()).get("success"))) {
-            @SuppressWarnings("unchecked")
-            Map<String, Object> data = (Map<String, Object>) response.getBody().get("data");
-
-            String emotion = (String) data.get("emotion");
-            return Emotion.valueOf(emotion);
-        } else {
+            if (response != null && response.emotion() != null) {
+                log.info("감정 분석 결과: {}", response.emotion());
+                try {
+                    return Emotion.valueOf(response.emotion());
+                } catch (IllegalArgumentException e) {
+                    log.error("알 수 없는 감정 유형: {}", response.emotion());
+                    throw new EmotionApiErrorException();
+                }
+            } else {
+                log.warn("감정 분석 API 응답이 비어있습니다.");
+                throw new EmotionApiErrorException();
+            }
+        } catch (RestClientException e) {
+            log.error("감정 분석 API 호출 중 오류 발생: {}", e.getMessage());
+            throw new EmotionApiErrorException();
+        } catch (Exception e) {
+            if (e instanceof EmotionApiErrorException) {
+                throw e;
+            }
+            log.error("예상치 못한 오류 발생: {}", e.getMessage());
             throw new EmotionApiErrorException();
         }
     }
