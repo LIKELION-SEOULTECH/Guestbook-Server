@@ -1,14 +1,16 @@
 package com.likelion.guestbook.emotion.dto;
 
+import java.util.List;
+
 public record EmotionAnalysis() {
     public record request(
-            String content
+            String sentence
     ) {
     }
 
     public record response(
             String emotion,
-            double confidence
+            List<Double> probabilities
     ) {
     }
 }
