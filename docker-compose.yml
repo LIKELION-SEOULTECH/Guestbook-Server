@@ -16,7 +16,10 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-plikelion" ]
       interval: 5s
@@ -24,15 +27,10 @@ services:
       retries: 10
 
   emotion-model:
-    image: geonheu/kobert_model:0.0.5
+    image: geonheu/kobert_model:0.0.6
     container_name: kobert-emotion-server
     ports:
       - "8000:8000"
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8000/predict" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
   spring-app:
     image: anjeonghoo/guestbook:latest
@@ -40,10 +38,8 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      db:
-        condition: service_healthy
-      emotion-model:
-        condition: service_healthy
+      - db
+      - emotion-model
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/guestbook
       SPRING_DATASOURCE_USERNAME: user
