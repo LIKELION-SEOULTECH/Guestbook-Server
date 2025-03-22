@@ -4,9 +4,11 @@ import com.likelion.guestbook.emotion.entity.Emotion;
 import com.likelion.guestbook.emotion.service.EmotionService;
 import com.likelion.guestbook.exception.custom.BadRequestException;
 import com.likelion.guestbook.exception.custom.UnauthorizedException;
+import com.likelion.guestbook.post.dto.PostListResponse;
+import com.likelion.guestbook.post.dto.PostRequest;
+import com.likelion.guestbook.post.dto.PostResponse;
 import com.likelion.guestbook.post.entity.Post;
 import com.likelion.guestbook.post.repository.PostRepository;
-import com.likelion.guestbook.post.dto.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -48,15 +50,15 @@ public class PostService {
                 .map(PostResponse::from)
                 .toList();
 
-        return PostListResponse.builder()
-                .meta(PostListResponse.MetaData.builder()
-                        .totalElements(postListPage.getTotalElements())
-                        .page(page)
-                        .size(limit)
-                        .totalPages(postListPage.getTotalPages())
-                        .build())
-                .posts(postResponses)
-                .build();
+        return new PostListResponse(
+                new PostListResponse.MetaData(
+                        page,
+                        limit,
+                        postListPage.getTotalPages(),
+                        postListPage.getTotalElements()
+                ),
+                postResponses
+        );
     }
 
     @Transactional
