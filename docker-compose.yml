@@ -1,6 +1,7 @@
 version: '3.8'
 
 services:
+
   db:
     image: mysql:8.0
     container_name: mysql-likelion-guestbook
@@ -17,10 +18,40 @@ services:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-plikelion"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-plikelion" ]
       interval: 5s
       timeout: 5s
       retries: 10
+
+  emotion-model:
+    image: geonheu/kobert_model:0.0.5
+    container_name: kobert-emotion-server
+    ports:
+      - "5000:5000"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:5000/predict" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  spring-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: guestbook-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+      emotion-model:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/guestbook
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: likelion
+      EMOTION_ANALYSIS_URL: http://emotion-model:5000/predict
+    restart: always
 
 volumes:
   mysql-data:

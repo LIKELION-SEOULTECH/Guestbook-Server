@@ -1,17 +1,16 @@
 package com.likelion.guestbook.emotion.service;
 
 import com.likelion.guestbook.emotion.dto.EmotionAnalysis;
-import com.likelion.guestbook.exception.custom.EmotionApiErrorException;
 import com.likelion.guestbook.emotion.entity.Emotion;
+import com.likelion.guestbook.exception.custom.EmotionApiErrorException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.Collections;
 import java.util.Map;
 
 @Slf4j
@@ -20,7 +19,7 @@ import java.util.Map;
 public class EmotionService {
     private final WebClient webClient;
 
-    @Value("${emotion.analysis.url:http://127.0.0.1:5000/predict}")
+    @Value("${EMOTION_ANALYSIS_URL}")
     private String emotionAnalysisUrl;
 
     private static final Map<String, Emotion> EMOTION_MAPPING = Map.of(
