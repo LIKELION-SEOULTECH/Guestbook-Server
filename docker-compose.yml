@@ -27,17 +27,15 @@ services:
     image: geonheu/kobert_model:0.0.5
     container_name: kobert-emotion-server
     ports:
-      - "5000:5000"
+      - "8000:8000"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:5000/predict" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/predict" ]
       interval: 10s
       timeout: 5s
       retries: 5
 
   spring-app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: anjeonghoo/guestbook:latest
     container_name: guestbook-app
     ports:
       - "8080:8080"
@@ -50,7 +48,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/guestbook
       SPRING_DATASOURCE_USERNAME: user
       SPRING_DATASOURCE_PASSWORD: likelion
-      EMOTION_ANALYSIS_URL: http://emotion-model:5000/predict
+      EMOTION_ANALYSIS_URL: http://emotion-model:8000/predict
     restart: always
 
 volumes:
