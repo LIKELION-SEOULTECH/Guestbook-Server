@@ -23,12 +23,13 @@ public class EmotionService {
     private String emotionAnalysisUrl;
 
     private static final Map<String, Emotion> EMOTION_MAPPING = Map.of(
-            "기쁨", Emotion.DELIGHT,
-            "슬픔", Emotion.SORROW,
+            "공포", Emotion.HORROR,
+            "놀람", Emotion.SURPRISE,
             "분노", Emotion.ANGER,
-            "불안", Emotion.UNREST,
-            "당황", Emotion.EMBARRASSMENT,
-            "상처", Emotion.WOUND
+            "슬픔", Emotion.SORROW,
+            "중립", Emotion.NEUTRALITY,
+            "행복", Emotion.HAPPINESS,
+            "혐오", Emotion.AVERSION
     );
 
     public Emotion getEmotion(String content) {
