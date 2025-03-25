@@ -33,7 +33,7 @@ services:
       - "8000:8000"
 
   spring-app:
-    image: anjeonghoo/guestbook:latest
+    image: saeyeonn/guestbook:latest
     container_name: guestbook-app
     ports:
       - "8080:8080"
