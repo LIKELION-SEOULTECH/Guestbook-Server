@@ -11,3 +11,5 @@ CREATE TABLE IF NOT EXISTS posts (
                                      created_at DATETIME,
                                      updated_at DATETIME
 );
+
+ALTER TABLE posts MODIFY id BIGINT AUTO_INCREMENT;
