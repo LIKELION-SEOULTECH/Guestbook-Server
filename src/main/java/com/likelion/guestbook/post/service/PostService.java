@@ -30,9 +30,11 @@ public class PostService {
     @Transactional
     public PostResponse createPost(PostRequest.@Valid create request) {
         Emotion emotion = emotionService.getEmotion(request.content());
+        String hashedPassword = passwordEncoder.encode(request.password());
+
         Post post = Post.builder()
                 .userName(request.userName())
-                .password(request.password())
+                .password(hashedPassword)
                 .content(request.content())
                 .emotion(emotion)
                 .build();
