@@ -1,7 +1,9 @@
 package com.likelion.guestbook.emotion.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
+@Getter
 @AllArgsConstructor
 public enum Emotion {
     HORROR("공포"),

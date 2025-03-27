@@ -23,6 +23,7 @@ public class Post extends BaseEntity {
     @Column(name = "content")
     private String content;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "emotion")
     private Emotion emotion;
 

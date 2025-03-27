@@ -29,6 +29,7 @@ public class PostService {
 
     @Transactional
     public PostResponse createPost(PostRequest.@Valid create request) {
+
         Emotion emotion = emotionService.getEmotion(request.content());
         String hashedPassword = passwordEncoder.encode(request.password());
 

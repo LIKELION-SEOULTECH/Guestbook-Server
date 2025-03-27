@@ -11,7 +11,7 @@ public record PostResponse(
         Long id,
         String userName,
         String content,
-        Emotion emotion,
+        String emotion,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
@@ -20,7 +20,7 @@ public record PostResponse(
                 .id(post.getId())
                 .userName(post.getUserName())
                 .content(post.getContent())
-                .emotion(post.getEmotion())
+                .emotion(post.getEmotion() != null ? post.getEmotion().getValue() : "알 수 없음")
                 .createdAt(post.getCreatedAt())
                 .updatedAt(post.getUpdatedAt())
                 .build();
