@@ -11,7 +11,7 @@ public record PostResponse(
         Long id,
         String userName,
         String content,
-        Emotion emotion,
+        String emotion,
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
